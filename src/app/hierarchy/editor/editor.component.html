@@ -16,7 +16,14 @@
         [cdkDropListData]="assignedProperties"
         [cdkDropListConnectedTo]="[unassignedGroup]"
         (cdkDropListDropped)="drop($event)"
+        (contextmenu)="openMenu1($event)"
       >
+
+        <div style="visibility: hidden; position: fixed"
+             [style.left]="contextMenuPosition.x"
+             [style.top]="contextMenuPosition.y"
+             [matMenuTriggerFor]="contextMenu">
+        </div>
           <div class="card" *ngFor="let assignedProperty of assignedProperties" cdkDrag>
             {{assignedProperty.name}}
           </div>
@@ -37,3 +44,9 @@
     </div>
   </div>
 </div>
+
+<mat-menu #contextMenu="matMenu">
+  <ng-template matMenuContent let-item="item">
+    <button mat-menu-item (click)="addPropertyGroup(item)">New Group</button>
+  </ng-template>
+</mat-menu>

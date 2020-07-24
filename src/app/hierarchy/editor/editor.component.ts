@@ -1,7 +1,8 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {Property} from './propery.interface';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
+import {MatMenuTrigger} from '@angular/material/menu';
 
 
 @Component({
@@ -14,6 +15,11 @@ export class EditorComponent implements OnInit {
   rootPropertyGroup: FormControl;
   unassignedProperties: Property[];
   assignedProperties: Property[];
+
+  contextMenuPosition = { x: '0px', y: '0px' };
+
+  @ViewChild(MatMenuTrigger)
+  contextMenu: MatMenuTrigger;
 
   constructor() {
     this.rootPropertyGroup = new FormControl('', []);
@@ -55,5 +61,16 @@ export class EditorComponent implements OnInit {
     }else {
       transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
     }
+  }
+
+  openMenu1(event: MouseEvent) {
+    event.preventDefault();
+    this.contextMenuPosition.x = event.clientX + 'px';
+    this.contextMenuPosition.y = event.clientY + 'px';
+    this.contextMenu.openMenu();
+  }
+
+  addPropertyGroup(item) {
+    console.log('Create New Property Group');
   }
 }

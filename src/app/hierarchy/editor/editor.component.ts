@@ -1,12 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {Property} from './propery.interface';
+import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 
-interface Hierarchy {
-  id: number;
-  parentId: number;
-
-}
 
 @Component({
   selector: 'app-editor',
@@ -17,10 +13,11 @@ export class EditorComponent implements OnInit {
 
   rootPropertyGroup: FormControl;
   unassignedProperties: Property[];
-  unassignedHierarchy: Hierarchy[];
+  assignedProperties: Property[];
 
   constructor() {
     this.rootPropertyGroup = new FormControl('', []);
+    this.assignedProperties = [];
   }
 
   ngOnInit(): void {
@@ -50,5 +47,13 @@ export class EditorComponent implements OnInit {
         name: 'Property5'
       }
     ];
+  }
+
+  drop(event: CdkDragDrop<Property[]>) {
+    if (event.previousContainer === event.container){
+      moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+    }else {
+      transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
+    }
   }
 }

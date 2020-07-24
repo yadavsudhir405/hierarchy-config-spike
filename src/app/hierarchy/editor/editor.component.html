@@ -9,15 +9,30 @@
     </mat-card>
   </div>
   <div class="left-right">
-    <div
-      class="left">
-      <div class="card" *ngFor="let item of unassignedHierarchy">{{item}}</div>
+    <div class="left">
+      <mat-card
+        cdkDropList style="min-height: 400px"
+        #assignedGroup="cdkDropList"
+        [cdkDropListData]="assignedProperties"
+        [cdkDropListConnectedTo]="[unassignedGroup]"
+        (cdkDropListDropped)="drop($event)"
+      >
+          <div class="card" *ngFor="let assignedProperty of assignedProperties" cdkDrag>
+            {{assignedProperty.name}}
+          </div>
+      </mat-card>
     </div>
     <div class="right">
-      <mat-card>
-        <div class="card" *ngFor="let unassignedProperty of unassignedProperties">
-          {{unassignedProperty.name}}
-        </div>
+      <mat-card
+        cdkDropList
+        #unassignedGroup="cdkDropList"
+        [cdkDropListData]="unassignedProperties"
+        [cdkDropListConnectedTo]="[assignedGroup]"
+        (cdkDropListDropped)="drop($event)"
+      >
+          <div class="card" *ngFor="let unassignedProperty of unassignedProperties" cdkDrag>
+            {{unassignedProperty.name}}
+          </div>
       </mat-card>
     </div>
   </div>

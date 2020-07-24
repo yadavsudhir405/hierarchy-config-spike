@@ -2,6 +2,12 @@ import {Component, OnInit} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {Property} from './propery.interface';
 
+interface Hierarchy {
+  id: number;
+  parentId: number;
+
+}
+
 @Component({
   selector: 'app-editor',
   templateUrl: './editor.component.html',
@@ -11,6 +17,7 @@ export class EditorComponent implements OnInit {
 
   rootPropertyGroup: FormControl;
   unassignedProperties: Property[];
+  unassignedHierarchy: Hierarchy[];
 
   constructor() {
     this.rootPropertyGroup = new FormControl('', []);

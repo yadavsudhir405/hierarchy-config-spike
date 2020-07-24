@@ -9,10 +9,9 @@
     </mat-card>
   </div>
   <div class="left-right">
-    <div class="left">
-     <mat-card>
-       Left
-     </mat-card>
+    <div
+      class="left">
+      <div class="card" *ngFor="let item of unassignedHierarchy">{{item}}</div>
     </div>
     <div class="right">
       <mat-card>

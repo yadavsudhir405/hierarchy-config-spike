@@ -1,0 +1,25 @@
+<div class="container">
+  <div class="action-container">
+    <!-- container for add button, save and delete -->
+    <mat-card>
+      <mat-form-field appearance="outline">
+        <mat-label>Root Hierarchy</mat-label>
+        <input matInput type="text" [formControl]="rootPropertyGroup" placeholder="Root hierarchy">
+      </mat-form-field>
+    </mat-card>
+  </div>
+  <div class="left-right">
+    <div class="left">
+     <mat-card>
+       Left
+     </mat-card>
+    </div>
+    <div class="right">
+      <mat-card>
+        <div class="card" *ngFor="let unassignedProperty of unassignedProperties">
+          {{unassignedProperty.name}}
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>

@@ -12,6 +12,7 @@ import {ReactiveFormsModule} from '@angular/forms';
 import {MatInputModule} from '@angular/material/input';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import {MatMenuModule} from '@angular/material/menu';
+import {CdkTreeModule} from '@angular/cdk/tree';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import {MatMenuModule} from '@angular/material/menu';
     MatIconModule,
     ReactiveFormsModule,
     MatInputModule,
-    MatMenuModule
+    MatMenuModule,
+    CdkTreeModule
   ],
   providers: [],
   bootstrap: [AppComponent]

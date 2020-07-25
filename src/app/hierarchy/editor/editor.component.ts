@@ -3,6 +3,9 @@ import {FormControl} from '@angular/forms';
 import {Property} from './propery.interface';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {MatMenuTrigger} from '@angular/material/menu';
+import {NestedTreeControl} from '@angular/cdk/tree';
+import {PropertyGroup} from './property-group.interface';
+import {BehaviorSubject} from 'rxjs';
 
 
 @Component({
@@ -17,9 +20,16 @@ export class EditorComponent implements OnInit {
   assignedProperties: Property[];
 
   contextMenuPosition = { x: '0px', y: '0px' };
-
   @ViewChild(MatMenuTrigger)
   contextMenu: MatMenuTrigger;
+
+  hierarchyData: PropertyGroup[] = [];
+
+  dataSubject = new BehaviorSubject<PropertyGroup[]>(this.hierarchyData);
+  treeControl = new NestedTreeControl<PropertyGroup> (node => node.children);
+  dataSource$ = this.dataSubject.asObservable();
+
+  hasChild = (_: number, node: PropertyGroup) => !!node.children && node.children.length > 0;
 
   constructor() {
     this.rootPropertyGroup = new FormControl('', []);
@@ -60,6 +70,11 @@ export class EditorComponent implements OnInit {
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     }else {
       transferArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
+      if (event.container.id === 'assignedGroup'){
+        this.addPropertyGroup(event.container.data[event.currentIndex]);
+      }else{
+        this.removePropertyGroup(event.container.data[event.currentIndex]);
+      }
     }
   }
 
@@ -70,7 +85,21 @@ export class EditorComponent implements OnInit {
     this.contextMenu.openMenu();
   }
 
-  addPropertyGroup(item) {
-    console.log('Create New Property Group');
+  addPropertyGroup(item: Property) {
+    this.hierarchyData.push({
+      name: item ? item.name : 'New PropertyGroup',
+      children: [
+      ]
+    });
+    this.dataSubject.next(this.hierarchyData);
+  }
+
+  private removePropertyGroup(property: Property) {
+    this.hierarchyData = this.hierarchyData.filter(p => p.name !== property.name);
+    this.dataSubject.next(this.hierarchyData);
+  }
+
+  addNewItem(node: PropertyGroup) {
+    
   }
 }

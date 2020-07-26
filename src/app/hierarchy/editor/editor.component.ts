@@ -3,7 +3,7 @@ import {FormControl} from '@angular/forms';
 import {Property} from './propery.interface';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {MatMenuTrigger} from '@angular/material/menu';
-import {NestedTreeControl} from '@angular/cdk/tree';
+import {CdkNestedTreeNode, CdkTree, NestedTreeControl} from '@angular/cdk/tree';
 import {PropertyGroup} from './property-group.interface';
 import {BehaviorSubject} from 'rxjs';
 
@@ -22,6 +22,8 @@ export class EditorComponent implements OnInit {
   contextMenuPosition = { x: '0px', y: '0px' };
   @ViewChild(MatMenuTrigger)
   contextMenu: MatMenuTrigger;
+
+  @ViewChild(CdkTree) cdkTree: CdkTree<PropertyGroup>;
 
   hierarchyData: PropertyGroup[] = [];
 
@@ -100,6 +102,17 @@ export class EditorComponent implements OnInit {
   }
 
   addNewItem(node: PropertyGroup) {
-    
+    node.children.push(this.newPropertyGroup('New'));
+    this.dataSubject.next([]);
+    this.dataSubject.next(Array.from(this.hierarchyData));
+    this.treeControl.expand(node);
+
+  }
+
+  private newPropertyGroup(name: string, children: PropertyGroup[]= []): PropertyGroup {
+    return {
+      name,
+      children
+    };
   }
 }

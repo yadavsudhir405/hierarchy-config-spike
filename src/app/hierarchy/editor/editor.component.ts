@@ -1,11 +1,12 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {FormControl} from '@angular/forms';
 import {Property} from './propery.interface';
-import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
+import {CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {MatMenuTrigger} from '@angular/material/menu';
-import {CdkNestedTreeNode, CdkTree, NestedTreeControl} from '@angular/cdk/tree';
+import {CdkTree, NestedTreeControl} from '@angular/cdk/tree';
 import {PropertyGroup} from './property-group.interface';
 import {BehaviorSubject} from 'rxjs';
+import {create_UUID} from '../../uuid-genrerator';
 
 
 @Component({
@@ -14,6 +15,11 @@ import {BehaviorSubject} from 'rxjs';
   styleUrls: ['./editor.component.scss']
 })
 export class EditorComponent implements OnInit {
+
+  constructor() {
+    this.rootPropertyGroup = new FormControl('', []);
+    this.assignedProperties = [];
+  }
 
   rootPropertyGroup: FormControl;
   unassignedProperties: Property[];
@@ -31,11 +37,21 @@ export class EditorComponent implements OnInit {
   treeControl = new NestedTreeControl<PropertyGroup> (node => node.children);
   dataSource$ = this.dataSubject.asObservable();
 
+  private static makePropertyAsLeafPropertyGp(propertyGroup: PropertyGroup): void {
+    propertyGroup.leafPropertyGroup = true;
+  }
+
+  private static makePropertyAsNonLeafPropertyGp(propertyGroup: PropertyGroup): void {
+    propertyGroup.leafPropertyGroup = false;
+  }
+
   hasChild = (_: number, node: PropertyGroup) => !!node.children && node.children.length > 0;
 
-  constructor() {
-    this.rootPropertyGroup = new FormControl('', []);
-    this.assignedProperties = [];
+  isLeafPropertyGroup = (_: number, node: PropertyGroup) => node.leafPropertyGroup;
+  enterPredicate = (node: PropertyGroup) => {
+    return (drag: CdkDrag, drop: CdkDropList) => {
+        return node.leafPropertyGroup;
+    };
   }
 
   ngOnInit(): void {
@@ -68,6 +84,7 @@ export class EditorComponent implements OnInit {
   }
 
   drop(event: CdkDragDrop<Property[]>) {
+    debugger;
     if (event.previousContainer === event.container){
       moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
     }else {
@@ -88,11 +105,7 @@ export class EditorComponent implements OnInit {
   }
 
   addPropertyGroup(item: Property) {
-    this.hierarchyData.push({
-      name: item ? item.name : 'New PropertyGroup',
-      children: [
-      ]
-    });
+    this.hierarchyData.push(this.newPropertyGroup('New PropertyGroup'));
     this.dataSubject.next(this.hierarchyData);
   }
 
@@ -102,7 +115,7 @@ export class EditorComponent implements OnInit {
   }
 
   addNewItem(node: PropertyGroup) {
-    node.children.push(this.newPropertyGroup('New'));
+    node.children.push(this.newPropertyGroup('PropertyGroup'));
     this.dataSubject.next([]);
     this.dataSubject.next(Array.from(this.hierarchyData));
     this.treeControl.expand(node);
@@ -112,7 +125,20 @@ export class EditorComponent implements OnInit {
   private newPropertyGroup(name: string, children: PropertyGroup[]= []): PropertyGroup {
     return {
       name,
+      id: create_UUID(),
+      leafPropertyGroup: false,
       children
     };
   }
+
+  droppedToPropertyGroup(event: CdkDragDrop<any> , parentNode: PropertyGroup) {
+    const newProperty = this.newPropertyGroup(event.previousContainer.data[event.previousIndex].name);
+    newProperty.leafPropertyGroup = true;
+    parentNode.children.push(newProperty);
+    EditorComponent.makePropertyAsLeafPropertyGp(parentNode);
+    event.previousContainer.data.splice(event.previousIndex, 1);
+    this.dataSubject.next([]);
+    this.dataSubject.next(Array.from(this.hierarchyData));
+  }
+
 }

@@ -8,15 +8,10 @@
       </mat-form-field>
     </mat-card>
   </div>
-  <div class="left-right">
+  <div class="left-right" cdkDropListGroup>
     <div class="left">
       <mat-card
-        cdkDropList style="min-height: 400px"
-        id="assignedGroup"
-        #assignedGroup="cdkDropList"
-        [cdkDropListData]="assignedProperties"
-        [cdkDropListConnectedTo]="[unassignedGroup]"
-        (cdkDropListDropped)="drop($event)"
+        style="min-height: 400px"
         (contextmenu)="openMenu1($event)"
       >
 
@@ -30,8 +25,17 @@
           <cdk-nested-tree-node *cdkTreeNodeDef="let node" class="example-tree-node">
             <!-- use a disabled button to provide padding for tree leaf -->
             <button mat-icon-button disabled></button>
-            {{node.name}}
-            <button mat-icon-button (click)="addNewItem(node)"><mat-icon>add</mat-icon></button>
+            <div
+              cdkDropList
+              id="{{node.id}}"
+              [cdkDropListData]="node.children"
+              (cdkDropListDropped)="droppedToPropertyGroup($event, node)"
+              style="display: inline-block">
+              {{node.name}}
+            </div>
+            <button mat-icon-button (click)="addNewItem(node)" *ngIf="!node.leafPropertyGroup">
+              <mat-icon>add</mat-icon>
+            </button>
           </cdk-nested-tree-node>
           <!-- This is the tree node template for expandable nodes -->
           <cdk-nested-tree-node *cdkTreeNodeDef="let node; when: hasChild" class="example-tree-node">
@@ -40,29 +44,35 @@
                 {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
               </mat-icon>
             </button>
-            {{node.name}}
+            <div
+              cdkDropList
+              [cdkDropListEnterPredicate]="enterPredicate(node)"
+              id="NewPropertyGroup"
+              [cdkDropListData]="node.children"
+              (cdkDropListDropped)="droppedToPropertyGroup($event, node)"
+              style="display: inline-block">
+              {{node.name}}
+            </div>
+            <button mat-icon-button (click)="addNewItem(node)" *ngIf="!node.leafPropertyGroup">
+              <mat-icon>add</mat-icon>
+            </button>
             <div [class.example-tree-invisible]="!treeControl.isExpanded(node)">
               <ng-container cdkTreeNodeOutlet></ng-container>
             </div>
           </cdk-nested-tree-node>
         </cdk-tree>
-
-          <div class="card" *ngFor="let assignedProperty of assignedProperties" cdkDrag>
-            {{assignedProperty.name}}
-          </div>
       </mat-card>
     </div>
     <div class="right">
       <mat-card
         cdkDropList
-        #unassignedGroup="cdkDropList"
+        id="unassigned-groups"
         [cdkDropListData]="unassignedProperties"
-        [cdkDropListConnectedTo]="[assignedGroup]"
         (cdkDropListDropped)="drop($event)"
       >
-          <div class="card" *ngFor="let unassignedProperty of unassignedProperties" cdkDrag>
-            {{unassignedProperty.name}}
-          </div>
+        <div class="card" *ngFor="let unassignedProperty of unassignedProperties" cdkDrag [cdkDragData]="{name: unassignedProperty.name, id: unassignedProperty.id}">
+          {{unassignedProperty.name}}
+        </div>
       </mat-card>
     </div>
   </div>

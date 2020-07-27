@@ -67,7 +67,7 @@
         [cdkDropListData]="unassignedProperties"
         (cdkDropListDropped)="drop($event)"
       >
-        <div class="card" *ngFor="let unassignedProperty of unassignedProperties" cdkDrag [cdkDragData]="{name: unassignedProperty.name, id: unassignedProperty.id}">
+        <div class="card" *ngFor="let unassignedProperty of unassignedProperties" cdkDrag>
           {{unassignedProperty.name}}
         </div>
       </mat-card>

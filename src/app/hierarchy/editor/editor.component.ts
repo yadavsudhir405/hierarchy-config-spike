@@ -29,7 +29,6 @@ export class EditorComponent implements OnInit {
   @ViewChild(MatMenuTrigger)
   contextMenu: MatMenuTrigger;
 
-  @ViewChild(CdkTree) cdkTree: CdkTree<PropertyGroup>;
 
   hierarchyData: PropertyGroup[] = [];
 

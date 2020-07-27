@@ -29,7 +29,12 @@
               [cdkDropListData]="node.children"
               (cdkDropListDropped)="droppedToPropertyGroup($event, node)"
               style="display: inline-block">
-              {{node.name}}
+              <div style="display: inline-block"
+                   cdkDrag
+                   [cdkDragData]="node"
+                   [cdkDragDisabled]="node.children.length > 0">
+                {{node.name}}
+              </div>
             </div>
             <button mat-icon-button (click)="addNewItem(node)" *ngIf="!node.leafPropertyGroup">
               <mat-icon>add</mat-icon>
@@ -53,8 +58,9 @@
             <button mat-icon-button (click)="addNewItem(node)" *ngIf="!node.leafPropertyGroup">
               <mat-icon>add</mat-icon>
             </button>
-            <div [class.example-tree-invisible]="!treeControl.isExpanded(node)">
-              <ng-container cdkTreeNodeOutlet></ng-container>
+            <div [class.example-tree-invisible]="!treeControl.isExpanded(node)"
+                 >
+              <ng-container cdkTreeNodeOutlet ></ng-container>
             </div>
           </cdk-nested-tree-node>
         </cdk-tree>
@@ -62,10 +68,11 @@
     </div>
     <div class="right">
       <mat-card
+        style="min-height: 600px"
         cdkDropList
         id="unassigned-groups"
         [cdkDropListData]="unassignedProperties"
-        (cdkDropListDropped)="drop($event)"
+        (cdkDropListDropped)="droppedToUnassignedProperties($event)"
       >
         <div class="card" *ngFor="let unassignedProperty of unassignedProperties" cdkDrag>
           {{unassignedProperty.name}}

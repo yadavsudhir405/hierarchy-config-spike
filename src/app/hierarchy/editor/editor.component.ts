@@ -140,4 +140,15 @@ export class EditorComponent implements OnInit {
     this.dataSubject.next(Array.from(this.hierarchyData));
   }
 
+  droppedToUnassignedProperties($event: CdkDragDrop<PropertyGroup>) {
+    // Add Items to Unassigned Propertied Array
+    // remove Items from parenet node
+    // trigger change event
+
+    const node = $event.item.data as PropertyGroup;
+    this.unassignedProperties.push({
+      id: 89,
+      name: node.name
+    });
+  }
 }

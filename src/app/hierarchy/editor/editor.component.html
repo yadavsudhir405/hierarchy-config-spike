@@ -33,7 +33,9 @@
                    cdkDrag
                    [cdkDragData]="node"
                    [cdkDragDisabled]="node.children.length > 0">
-                {{node.name}}
+                <mat-form-field>
+                  <input matInput type="text" [(ngModel)] ="node.name" value="{{node.name}}" >
+                </mat-form-field>
               </div>
             </div>
             <button mat-icon-button (click)="addNewItem(node)" *ngIf="!node.leafPropertyGroup">
@@ -53,7 +55,9 @@
               [cdkDropListData]="node.children"
               (cdkDropListDropped)="droppedToPropertyGroup($event, node)"
               style="display: inline-block">
-              {{node.name}}
+              <mat-form-field>
+                <input matInput type="text" [(ngModel)] ="node.name" value="{{node.name}}" >
+              </mat-form-field>
             </div>
             <button mat-icon-button (click)="addNewItem(node)" *ngIf="!node.leafPropertyGroup">
               <mat-icon>add</mat-icon>

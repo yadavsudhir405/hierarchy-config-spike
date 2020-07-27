@@ -133,22 +133,30 @@ export class EditorComponent implements OnInit {
   droppedToPropertyGroup(event: CdkDragDrop<any> , parentNode: PropertyGroup) {
     const newProperty = this.newPropertyGroup(event.previousContainer.data[event.previousIndex].name);
     newProperty.leafPropertyGroup = true;
+    newProperty.parent = parentNode;
     parentNode.children.push(newProperty);
     EditorComponent.makePropertyAsLeafPropertyGp(parentNode);
     event.previousContainer.data.splice(event.previousIndex, 1);
-    this.dataSubject.next([]);
-    this.dataSubject.next(Array.from(this.hierarchyData));
+    this.triggerDataChange();
   }
 
-  droppedToUnassignedProperties($event: CdkDragDrop<PropertyGroup>) {
-    // Add Items to Unassigned Propertied Array
-    // remove Items from parenet node
-    // trigger change event
+  droppedToUnassignedProperties($event: CdkDragDrop<PropertyGroup| Property[]>) {
 
-    const node = $event.item.data as PropertyGroup;
-    this.unassignedProperties.push({
-      id: 89,
-      name: node.name
-    });
+    if ($event.previousContainer !== $event.container){
+      const node = $event.item.data as PropertyGroup;
+      this.unassignedProperties.push({
+        id: 89,
+        name: node.name
+      });
+      node.parent.children = node.parent.children.filter(e => e.id !== node.id);
+      this.triggerDataChange();
+    }else {
+      moveItemInArray($event.container.data as Property[], $event.previousIndex, $event.currentIndex);
+    }
+  }
+
+  private triggerDataChange() {
+    this.dataSubject.next([]);
+    this.dataSubject.next(Array.from(this.hierarchyData));
   }
 }
